@@ -1,29 +1,29 @@
 <?php
-session_start();
+session_start(); 
 
-// Lista de palabras para el juego
+
 $palabras = ['elefante', 'jirafa', 'hipopotamo', 'rinoceronte', 'cocodrilo', 'camello', 'chimpance'];
 
-// Inicializar el juego
+
 if (!isset($_SESSION['palabra'])) {
     $_SESSION['palabra'] = $palabras[array_rand($palabras)];
-    $_SESSION['vidas'] = 6; // Número máximo de vidas
+    $_SESSION['vidas'] = 6; 
     $_SESSION['letras_acertadas'] = str_repeat('?', strlen($_SESSION['palabra']));
     $_SESSION['letras_usadas'] = [];
 }
 
-// Procesar la letra enviada
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['letra'])) {
     $letra = strtolower($_POST['letra']);
 
-    // Verificar si la letra ya se ha usado
+ 
     if (in_array($letra, $_SESSION['letras_usadas'])) {
         echo "Ya has usado la letra '$letra'. Intenta con otra.<br>";
     } else {
-        // Añadir la letra a las usadas
+        
         $_SESSION['letras_usadas'][] = $letra;
 
-        // Verificar si la letra está en la palabra secreta
+        
         if (strpos($_SESSION['palabra'], $letra) !== false) {
             for ($i = 0; $i < strlen($_SESSION['palabra']); $i++) {
                 if ($_SESSION['palabra'][$i] == $letra) {
@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['letra'])) {
     }
 }
 
-// Comprobar si se ha ganado o perdido
+
 if ($_SESSION['letras_acertadas'] == $_SESSION['palabra']) {
     echo "¡Enhorabuena! Has ganado :) La palabra era: " . $_SESSION['palabra'] . "<br>";
     session_destroy();
@@ -55,16 +55,62 @@ if ($_SESSION['letras_acertadas'] == $_SESSION['palabra']) {
 <head>
     <meta charset="UTF-8">
     <title>Ahorcado</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        h1 {
+            color: #333;
+        }
+        .vidas, .letras-usadas {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+        form input[type="text"] {
+            padding: 8px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 50px;
+            text-align: center;
+        }
+        form button {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        form button:hover {
+            background-color: #218838;
+        }
+    </style>
 </head>
 <body>
-    <h1>Juego del Ahorcado</h1>
-    <p>Palabra secreta: <?php echo $_SESSION['letras_acertadas']; ?></p>
-    <p>Vidas restantes: <?php echo $_SESSION['vidas']; ?></p>
-    <form method="post">
-        <label for="letra">Introduce una letra:</label>
-        <input type="text" name="letra" id="letra" maxlength="1" required>
-        <button type="submit">Adivinar</button>
-    </form>
-    <p>Letras usadas: <?php echo implode(', ', $_SESSION['letras_usadas']); ?></p>
+    <div class="container">
+        <h1>Juego del Ahorcado</h1>
+        <p class="vidas">Vidas restantes: <?php echo isset($_SESSION['vidas']) ? $_SESSION['vidas'] : 0; ?></p>
+        <p>Palabra secreta: <?php echo isset($_SESSION['letras_acertadas']) ? $_SESSION['letras_acertadas'] : ''; ?></p>
+        <form method="post">
+            <label for="letra">Introduce una letra:</label>
+            <input type="text" name="letra" id="letra" maxlength="1" required>
+            <button type="submit">Adivinar</button>
+        </form>
+        <p class="letras-usadas">Letras usadas: <?php echo isset($_SESSION['letras_usadas']) ? implode(', ', $_SESSION['letras_usadas']) : ''; ?></p>
+    </div>
 </body>
 </html>
