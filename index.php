@@ -89,14 +89,16 @@ if ($_SESSION['letras_acertadas'] == $_SESSION['palabra']) {
         }
         form button {
             padding: 10px 20px;
-            background-color: #28a745;
+            background-color: #007bff;
             color: #fff;
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            transition: background-color 0.3s ease;
         }
+
         form button:hover {
-            background-color: #218838;
+            background-color: #0056b3;
         }
     </style>
 </head>
